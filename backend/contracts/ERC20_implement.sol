@@ -7,7 +7,7 @@ pragma solidity >=0.8.9;
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Capped.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract YourToken is ERC20Capped, Ownable {
+contract ERC20_implement is ERC20Capped, Ownable {
 
     address owner_addr;
 
