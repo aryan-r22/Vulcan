@@ -11,8 +11,9 @@ contract ERC20_implement is ERC20Capped, Ownable {
 
     address owner_addr;
 
-    constructor(uint256 cap) ERC20("VCFI", "VCF") ERC20Capped(cap * 10 **18){
+    constructor(uint256 cap, uint256 amt) ERC20("VCFI_1", "VCF1") ERC20Capped(cap * 10 **18){
         owner_addr= msg.sender;
+        _mint(msg.sender, amt);
         }
 
     function mint_more(uint256 amt) public onlyOwner {

@@ -23,7 +23,8 @@ async function main() {
     // Get the deployed contract. We need both the specific CONTRACT_ADDRESS
     const Greeter = new hre.ethers.Contract(
         //'0x6aC72FE4b1e50A8cBfA957C7609aD010E82C811c',
-        '0x8e72381914da4d2ddc5afcd221f89d9748b29e28',
+        //'0x8e72381914da4d2ddc5afcd221f89d9748b29e28',
+        '0xa8177bBa20bAa95f519e538A63139F1B4e88b20E',
         abi,
         userWallet
     )
@@ -34,7 +35,7 @@ async function main() {
     // The first transaction sets a new greeting with setGreeting, and then
     // waits for the transaction to be mined before doing a sanity
     // check and checking the new greeting state.
-    const setTx1 = await Greeter.cap();
+    const setTx1 = await Greeter.totalSupply();
     //await setTx1.wait();
     console.log(setTx1);
 
