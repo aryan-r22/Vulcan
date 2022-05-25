@@ -1,15 +1,16 @@
 async function main() {
-   const TOKEN = await ethers.getContractFactory("ERC20_implement");
+   const TOKEN = await ethers.getContractFactory("ERC20_Factory");
 
    // Start deployment, returning a promise that resolves to a contract object
-   const token_d = await TOKEN.deploy("10000","10000000000000000000");   
+   const token_d = await TOKEN.deploy("0xbd357fD1f99a90d68484C9D90a027B8e1aC71D42");   
+   console.log("ERC20 Factory Contract deployed to address:", token_d.address);
 
 
-  //const TOKEN = await ethers.getContractFactory("ERC_721full");
+  const TOKEN1 = await ethers.getContractFactory("ERC721_Factory");
 
   //Start deployment, returning a promise that resolves to a contract object
-  //const token_d = await TOKEN.deploy();   
-   console.log("Contract deployed to address:", token_d.address);
+  const token_d1 = await TOKEN1.deploy("0xbd357fD1f99a90d68484C9D90a027B8e1aC71D42");
+  console.log("ERC721 Factory Contract deployed to address:", token_d1.address);
 }
 
 main()
