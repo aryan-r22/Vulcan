@@ -13,5 +13,5 @@ Contains backend code for smart contracts, written on Solidity.
 
 ## Currently implemented contracts
 - **ERC20**
-- **ERC721**
+- **ERC721**  
 More details can be found under `./contracts`.
