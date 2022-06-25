@@ -30,6 +30,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import { Badge, Container, InputAdornment, TextField } from "@mui/material";
 import Home from "../pages/Home";
 import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import EthereumLogo from "../assets/ethereum-white.png";
 import Profile from "../pages/Profile";
@@ -216,17 +217,8 @@ const Main = (props: SidebarProps) => {
                 }}
               />
               <Box display="flex">
-                <Badge variant="dot" color="primary">
-                  <IconButton color="inherit">
-                    <img
-                      src={EthereumLogo}
-                      alt="Connect to wallet"
-                      style={{ color: "#fff" }}
-                      height={24}
-                    />
-                  </IconButton>
-                </Badge>
-                <IconButton color="inherit">
+                <ConnectButton />
+                <IconButton sx={{ marginLeft: 2 }} color="inherit">
                   <LoginIcon />
                 </IconButton>
               </Box>
