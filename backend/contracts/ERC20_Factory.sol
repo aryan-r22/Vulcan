@@ -10,9 +10,9 @@ pragma solidity >=0.8.9;
 
 
 import "./ERC_20full.sol";
-import "./ERC20_AMM.sol"
+import "./ERC20_AMM.sol";
 
-contract ERC20_Factory {
+contract ERC20_Factory{
 
 	address owner_addr;
 
@@ -57,7 +57,6 @@ contract ERC20_Factory {
 	/// @param token_name: Name of the token.
 	/// @param token_sym: Symbol of the token.
 	/// @param founder_add: Address of the token founder.
-	/// @param cap: Upper Limit of the mintable tokens.
 	/// @param amt: Initial amount to mint.
 	/// @param reserveRatio: The reserve ratio for the bonding curve.
 	function createNewERC20AMM(string memory token_name, string memory token_sym, address founder_add, uint256 amt, uint256 reserveRatio) public {
