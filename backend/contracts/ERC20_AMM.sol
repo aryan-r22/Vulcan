@@ -9,17 +9,19 @@ pragma solidity >=0.8.9;
 /// @author Aryan Rastogi
 
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Capped.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+//import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "solidity-math-utils/projects/contracts/BondingCurves.sol";
 
 
-contract ERC20_AMM is ERC20Capped, Ownable, Pausable {
+contract ERC20_AMM is ERC20Capped, Pausable {
 
     address founder_addr;
     address owner_addr;
-    uint256 public reserveBalance = //to define;
+    uint256 public reserveBalance;
     uint256 public reserveRatio;
+    uint256 public token_price;
+    string public projectURI;
 
 
     event BuySuccessfulFor(address backer);
@@ -27,7 +29,6 @@ contract ERC20_AMM is ERC20Capped, Ownable, Pausable {
     event BuyQuoteObtainedFor(address backer);
     event SellQuoteObtainedFor(address backer);
     event CollateralTransferOf(uint256);
-    event TokenPriceIs(uint256)
 
     /// @notice List of backers
     mapping(address => uint256) public ownership;
@@ -42,15 +43,20 @@ contract ERC20_AMM is ERC20Capped, Ownable, Pausable {
     /// @param founder_add: Address of the token founder
     /// @param owner_add: Address of the owner
     /// @param amt: Initial amount to mint
+    /// @param collateral: Initial collateral staked by the founder
     constructor(string memory token_name, string memory token_sym, address founder_add,
-     address owner_add, uint amt ,uint256 res_rat) ERC20(token_name, token_sym)
+     address owner_add, uint amt ,uint256 res_rat, uint256 collateral, string memory project_hash) ERC20(token_name, token_sym) Ownable()
     {
         founder_addr= founder_add;
         owner_addr = owner_add;
+        transferOwnership(owner_addr);
         _mint(msg.sender, amt);
         whitelist[founder_addr] = true;
         whitelist[owner_addr] = true;
         reserveRatio = res_rat;
+        reserveBalance = collateral;
+        projectURI = project_hash;
+
     }
 
     /// @notice Mints ERC20 tokens using inherent Bonding Curve
@@ -63,6 +69,7 @@ contract ERC20_AMM is ERC20Capped, Ownable, Pausable {
         _mint(msg.sender, get_mint_value);
         emit BuySuccessfulFor(msg.sender);
         ownership[msg.sender]+=get_mint_value;
+        token_price = reserveBalance/(reserveRatio*_totalSupply);
     }
 
     /// @notice Returns a quote for the ERC20 tokens that can be bought for a given collateral
@@ -80,12 +87,14 @@ contract ERC20_AMM is ERC20Capped, Ownable, Pausable {
     function sell_tokens(uint256 amt) public
     {
         require(amt>0; "Must sell non-zero tokens");
+
         uint256 get_sell_value = sell(_totalSupply, reserveBalance, reserveRatio, amt);
         _burn(msg.sender, amt);
         msg.sender.transfer(get_sell_value);
         reserveBalance = reserveBalance.sub(get_sell_value);
         emit SellSuccessfulFor(msg.sender);
         ownership[msg.sender]-=get_mint_value;
+        token_price = reserveBalance/(reserveRatio*_totalSupply);
     }
 
     /// @notice Returns a quote for the collateral that can be obtained by selling ERC20 tokens
@@ -96,13 +105,6 @@ contract ERC20_AMM is ERC20Capped, Ownable, Pausable {
         uint256 get_sell_value = sell(_totalSupply, reserveBalance, reserveRatio, amt);
         return get_sell_value;
         emit SellQuoteObtainedFor(msg.sender);
-    }
-
-
-    function get_token_price() public returns(uint256)
-    {        
-        return reserveBalance/(reserveRatio*_totalSupply);
-        emit TokenPriceIs(reserveBalance/(reserveRatio*_totalSupply));
     }
 
 
