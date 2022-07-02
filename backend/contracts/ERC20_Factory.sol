@@ -44,7 +44,7 @@ contract ERC20_Factory{
 	/// @param cap: Upper Limit of the mintable tokens.
 	/// @param amt: Initial amount to mint.
 	function createNewERC20(string memory token_name, string memory token_sym, address founder_add, uint256 cap, uint256 amt) public {
-		require(msg.sender == owner_addr, 'You should be the owner to create ERC721 tokens');
+		require(msg.sender == owner_addr, 'You should be the owner to create ERC20 tokens');
 		ERC_20full obj = new ERC_20full(token_name,token_sym,founder_add, owner_addr,cap,amt);
 
 		erc20cts.push(obj);
@@ -59,9 +59,12 @@ contract ERC20_Factory{
 	/// @param founder_add: Address of the token founder.
 	/// @param amt: Initial amount to mint.
 	/// @param reserveRatio: The reserve ratio for the bonding curve.
-	function createNewERC20AMM(string memory token_name, string memory token_sym, address founder_add, uint256 amt, uint256 reserveRatio) public {
-		require(msg.sender == owner_addr, 'You should be the owner to create ERC721 tokens');
-		ERC20_AMM obj = new ERC20_AMM(token_name,token_sym,founder_add, owner_addr,cap,amt, reserveRatio);
+	/// @param coll: Initial collateral staked by the founder
+    /// @param proj_hash: Token URI of the project details
+	function createNewERC20AMM(string memory token_name, string memory token_sym, address founder_add, uint256 amt, uint256 reserveRatio,
+		uint256 coll, string memory proj_hash) public payable {
+		require(msg.sender == owner_addr, 'You should be the owner to create ERC20 tokens');
+		ERC20_AMM obj = new ERC20_AMM(token_name,token_sym,founder_add, owner_addr,cap,amt, reserveRatio, coll, proj_hash);
 
 		erc20cts_AMM.push(obj);
 

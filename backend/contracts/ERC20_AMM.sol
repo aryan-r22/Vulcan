@@ -18,7 +18,7 @@ contract ERC20_AMM is ERC20Capped, Pausable {
 
     address founder_addr;
     address owner_addr;
-    uint256 public reserveBalance;
+    uint256 internal reserveBalance;
     uint256 public reserveRatio;
     uint256 public token_price;
     string public projectURI;
@@ -29,6 +29,7 @@ contract ERC20_AMM is ERC20Capped, Pausable {
     event BuyQuoteObtainedFor(address backer);
     event SellQuoteObtainedFor(address backer);
     event CollateralTransferOf(uint256);
+    event CollateralAmountIs(uint256);
 
     /// @notice List of backers
     mapping(address => uint256) public ownership;
@@ -44,8 +45,10 @@ contract ERC20_AMM is ERC20Capped, Pausable {
     /// @param owner_add: Address of the owner
     /// @param amt: Initial amount to mint
     /// @param collateral: Initial collateral staked by the founder
+    /// @param project_hash: Token URI of the project details
     constructor(string memory token_name, string memory token_sym, address founder_add,
-     address owner_add, uint amt ,uint256 res_rat, uint256 collateral, string memory project_hash) ERC20(token_name, token_sym) Ownable()
+     address owner_add, uint amt ,uint256 res_rat, uint256 collateral, string memory project_hash) payable 
+    ERC20(token_name, token_sym) Ownable()
     {
         founder_addr= founder_add;
         owner_addr = owner_add;
@@ -74,6 +77,7 @@ contract ERC20_AMM is ERC20Capped, Pausable {
 
     /// @notice Returns a quote for the ERC20 tokens that can be bought for a given collateral
     /// @param amt: Amount of tokens expected to buy
+    /// @return Buy Estimation
     function get_buy_estimation(uint256 amt) public returns (uint256)
     {
         require(amt>0; "Must input DAI amount to get buy estimation");
@@ -99,6 +103,7 @@ contract ERC20_AMM is ERC20Capped, Pausable {
 
     /// @notice Returns a quote for the collateral that can be obtained by selling ERC20 tokens
     /// @param amt: Amount of tokens expected to sell   
+    /// @return Sell Estimation
     function get_sell_estimation(uint256 amt) public returns (uint256)
     {
         require(amt>0; "Must input token amount to get sell estimation");
@@ -116,6 +121,12 @@ contract ERC20_AMM is ERC20Capped, Pausable {
         founder_addr.transfer(amt);       
         reserveBalance = reserveBalance.sub(get_sell_value);     
         emit CollateralTransferOf(amt); 
+    }
+
+    /// @notice Emits event with amount of collateral
+    function get_collateral_amount()
+    {
+        emit CollateralAmountIs(reserveBalance);
     }
 
     /// @notice Pauses the contract. Accessible by the owner and the founder.
