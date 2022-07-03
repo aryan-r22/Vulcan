@@ -39,6 +39,7 @@ contract Treasury{
 		founder = founder_addr;
 		factory = msg.sender;
 		coll_token = StableCoin(stable_cn);
+		require(coll_token.balanceOf(founder_addr)>=ini_coll, "Founder must have sufficient collateral holding")
 		coll_token.transferFrom(founder_addr, address(this), ini_coll);
 		emit Deposit(founder_addr, ini_coll);
 	}
@@ -60,7 +61,7 @@ contract Treasury{
 		require(msg.sender == erc20_address, "Only corresponding ERC20 can access" );
 		require(coll_token.balanceOf(address(this))>=amount,
 			"Treasury doesn't have sufficient tokens");
-		coll_token.transfer(receiver, amount);
+		require(coll_token.transfer(receiver, amount);
 		emit Withdraw(receiver, amount);
 	}
 
