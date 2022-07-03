@@ -7,7 +7,7 @@ Required Solidity version ``>=0.8.9``.
 - **ERC20_Factory.sol**  
 Contains code for creating and deploying ERC20 contracts on demand.  
     - Accessible by the ``Owner``.  
-    - Implements ***ERC_20full.sol***.  
+    - Implements ***ERC_20full.sol*** or ***ERC20_AMM.sol*** together with ***Treasury.sol***.    
 
 - **ERC721_Factory.sol**
 Contains code for creating and deploying ERC721 contracts on demand.  
@@ -45,5 +45,16 @@ Contains code for interacting with ERC20 contracts.
 
 Individual functions provided by the contract may be looked up into the *natspec* comments for the contract.  
 
+- **ERC20_AMM.sol**  
+Implements ERC_20full with Bancorised bonding curve as AMM.  
+    - Uses ``solidity-math-utils`` to implement the bonding curve formulas.  
+    - Incorporates all the functionalities of `ERC_20full.sol`.  
+    - Has *buy* and *sell* functions.  
+
+
+- **Treasury.sol**  
+Implements treasury for holding collateral.  
+    - Stores collateral in the currency set by the ***ERC20_Factory.sol***.
+    - Closely linked with ***ERC20_AMM***.
 
 
