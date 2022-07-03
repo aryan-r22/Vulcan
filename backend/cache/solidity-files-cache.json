@@ -931,7 +931,7 @@
       ]
     },
     "D:\\Aryan\\Projects\\UCL\\vulcan\\backend\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\IERC20.sol": {
-      "lastModificationDate": 1656350605780,
+      "lastModificationDate": 1656868091912,
       "contentHash": "da337b36f786d26e7e0826fa874f8d27",
       "sourceName": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
       "solcConfig": {
@@ -1078,8 +1078,8 @@
       ]
     },
     "D:\\Aryan\\Projects\\UCL\\vulcan\\backend\\contracts\\Treasury.sol": {
-      "lastModificationDate": 1656863865537,
-      "contentHash": "cdf80f9dc6a4886ce5f39f39263648c2",
+      "lastModificationDate": 1656869159049,
+      "contentHash": "3fcbfedcf8f184db10cec9bebdfb5f0d",
       "sourceName": "contracts/Treasury.sol",
       "solcConfig": {
         "version": "0.8.14",
@@ -1104,12 +1104,14 @@
           }
         }
       },
-      "imports": [],
+      "imports": [
+        "@openzeppelin/contracts/interfaces/IERC20.sol",
+        "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol"
+      ],
       "versionPragmas": [
         ">=0.8.9"
       ],
       "artifacts": [
-        "StableCoin",
         "Treasury"
       ]
     },
@@ -1774,6 +1776,79 @@
       ],
       "artifacts": [
         "ERC20_Factory"
+      ]
+    },
+    "D:\\Aryan\\Projects\\UCL\\vulcan\\backend\\node_modules\\@openzeppelin\\contracts\\interfaces\\IERC20.sol": {
+      "lastModificationDate": 1656868052315,
+      "contentHash": "b9ce93875c480e21f71821186ea7736a",
+      "sourceName": "@openzeppelin/contracts/interfaces/IERC20.sol",
+      "solcConfig": {
+        "version": "0.8.14",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../token/ERC20/IERC20.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": []
+    },
+    "D:\\Aryan\\Projects\\UCL\\vulcan\\backend\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\utils\\SafeERC20.sol": {
+      "lastModificationDate": 1656868513046,
+      "contentHash": "43441f54be9683bd6cbe186e1d13b959",
+      "sourceName": "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
+      "solcConfig": {
+        "version": "0.8.14",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../IERC20.sol",
+        "../../../utils/Address.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "SafeERC20"
       ]
     }
   }

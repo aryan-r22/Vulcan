@@ -9,13 +9,13 @@ pragma solidity >=0.8.9;
 /// @author Aryan Rastogi
 
 
-interface StableCoin {
-    function transfer(address rec, uint amt) external returns (bool);
-    function balanceOf(address acc) external view returns (uint);
-    function transferFrom(address sen, address rec, uint256 amt) external returns (bool);
-}
+import "@openzeppelin/contracts/interfaces/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+
 
 contract Treasury{
+
+	using SafeERC20 for IERC20;
 
 	event Withdraw(address to, uint256 amount);
 	event Deposit(address from, uint256 amount);
@@ -23,7 +23,7 @@ contract Treasury{
 
 
 	address owner;
-	StableCoin coll_token;
+	IERC20 coll_token;
 	address founder;
 	address factory;
 	address erc20_address;
@@ -38,9 +38,9 @@ contract Treasury{
 		owner = owner_addr;
 		founder = founder_addr;
 		factory = msg.sender;
-		coll_token = StableCoin(stable_cn);
-		require(coll_token.balanceOf(founder_addr)>=ini_coll, "Founder must have sufficient collateral holding")
-		coll_token.transferFrom(founder_addr, address(this), ini_coll);
+		coll_token = IERC20(stable_cn);
+		require(coll_token.balanceOf(founder_addr)>=ini_coll, "Founder must have sufficient collateral holding");
+		coll_token.safeTransferFrom(founder_addr, address(this), ini_coll);
 		emit Deposit(founder_addr, ini_coll);
 	}
 
@@ -50,7 +50,7 @@ contract Treasury{
 	function deposit(address sender, uint256 amount) external{
 		require(msg.sender == erc20_address, "Only corresponding ERC20 can access" );
 		require(coll_token.balanceOf(sender)>=amount, "Insufficient funds to perform a buy transaction");
-		coll_token.transferFrom(sender, address(this), amount);
+		coll_token.safeTransferFrom(sender, address(this), amount);
 		emit Deposit(sender, amount);
 	}
 
@@ -61,7 +61,7 @@ contract Treasury{
 		require(msg.sender == erc20_address, "Only corresponding ERC20 can access" );
 		require(coll_token.balanceOf(address(this))>=amount,
 			"Treasury doesn't have sufficient tokens");
-		require(coll_token.transfer(receiver, amount);
+		coll_token.safeTransfer(receiver, amount);
 		emit Withdraw(receiver, amount);
 	}
 
@@ -69,7 +69,7 @@ contract Treasury{
     /// @param amount: Amount to transfer to the founder
 	function transferToFounder(uint256 amount) external{
 		require(msg.sender == erc20_address, "Only corresponding ERC20 can access" );
-		coll_token.transfer(founder, amount);
+		coll_token.safeTransfer(founder, amount);
 		emit TransferCollateralToFounder(amount);
 	}
 
