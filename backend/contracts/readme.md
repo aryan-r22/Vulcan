@@ -4,10 +4,15 @@ Required Solidity version ``>=0.8.9``.
 
 ## Contract details  
 
-- **ERC20_Factory.sol**  
-Contains code for creating and deploying ERC20 contracts on demand.  
+- **ERC20full_Factory.sol**  
+Contains code for creating and deploying ERC20 base contracts on demand.  
     - Accessible by the ``Owner``.  
-    - Implements ***ERC_20full.sol*** or ***ERC20_AMM.sol*** together with ***Treasury.sol***.    
+    - Implements ***ERC_20full.sol***.    
+
+- **ERC20AMM_Factory.sol**  
+Contains code for creating and deploying ERC20 AMM (Bonding Curve) contracts on demand.  
+    - Accessible by the ``Owner``.  
+    - Implements ***ERC20_AMM.sol*** together with ***Treasury.sol***.    
 
 - **ERC721_Factory.sol**
 Contains code for creating and deploying ERC721 contracts on demand.  
