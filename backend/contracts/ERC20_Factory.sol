@@ -11,6 +11,7 @@ pragma solidity >=0.8.9;
 
 import "./ERC_20full.sol";
 import "./ERC20_AMM.sol";
+import "./Treasury.sol";
 
 contract ERC20_Factory{
 
@@ -20,7 +21,10 @@ contract ERC20_Factory{
 	ERC_20full[] public erc20cts;
 
 	/// @notice Addresses of the deployed ERC20 (AMM) tokens.
-	ERC_20full[] public erc20cts_AMM;
+	ERC20_AMM[] public erc20cts_AMM;
+
+	/// @notice Addresses of the treasury contract.
+	Treasury[] public treasury;
 
 	/// @notice Event emitted when an ERC20 contract (base) is deployed.
 	/// @param contract_addr: Address of the deployed contract.
@@ -29,6 +33,10 @@ contract ERC20_Factory{
 	/// @notice Event emitted when an ERC20 contract (AMM) is deployed.
 	/// @param contract_addr: Address of the deployed contract.
 	event Deployed_ERC20AMMto(address contract_addr);
+
+	/// @notice Event emitted when a Treasury for ERC20 (AMM) is deployed.
+	/// @param contract_addr: Address of the deployed contract.
+	event Deployed_Treasuryto(address contract_addr);
 
 
 	/// @notice Constructor to set owner of the contract.
@@ -43,7 +51,8 @@ contract ERC20_Factory{
 	/// @param founder_add: Address of the token founder.
 	/// @param cap: Upper Limit of the mintable tokens.
 	/// @param amt: Initial amount to mint.
-	function createNewERC20(string memory token_name, string memory token_sym, address founder_add, uint256 cap, uint256 amt) public {
+	function createNewERC20(string memory token_name, string memory token_sym, address founder_add,
+	 uint256 cap, uint256 amt) public {
 		require(msg.sender == owner_addr, 'You should be the owner to create ERC20 tokens');
 		ERC_20full obj = new ERC_20full(token_name,token_sym,founder_add, owner_addr,cap,amt);
 
@@ -61,14 +70,24 @@ contract ERC20_Factory{
 	/// @param reserveRatio: The reserve ratio for the bonding curve.
 	/// @param coll: Initial collateral staked by the founder
     /// @param proj_hash: Token URI of the project details
-	function createNewERC20AMM(string memory token_name, string memory token_sym, address founder_add, uint256 amt, uint256 reserveRatio,
-		uint256 coll, string memory proj_hash) public payable {
+    /// @param stable_coin: Contract address of the stablecoin to be used as collateral.
+	function createNewERC20AMM(string memory token_name, string memory token_sym, 
+		address founder_add, uint256 amt, uint256 reserveRatio,
+		uint256 coll, string memory proj_hash, address stable_coin) public {
 		require(msg.sender == owner_addr, 'You should be the owner to create ERC20 tokens');
-		ERC20_AMM obj = new ERC20_AMM(token_name,token_sym,founder_add, owner_addr,cap,amt, reserveRatio, coll, proj_hash);
+		Treasury tr = new Treasury(owner_addr, founder_add, coll, stable_coin);
+
+		ERC20_AMM obj = new ERC20_AMM(token_name,token_sym,founder_add, owner_addr,
+			cap,amt, reserveRatio, address(tr), proj_hash);
+
+		tr.setERC20Corr(address(obj));
 
 		erc20cts_AMM.push(obj);
 
+		treasury.push(tr);
+
 		emit Deployed_ERC20AMMto(address(obj));
+		emit Deployed_Treasuryto(address(tr));
 	}
 
 
