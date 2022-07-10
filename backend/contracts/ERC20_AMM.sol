@@ -70,6 +70,12 @@ contract ERC20_AMM is ERC20, Pausable, BondingCurve {
         projectURI = project_hash;
     }
 
+    /// @notice Updates token price
+    function update_token_price() public
+    {
+        token_price = reserveBalance/(reserveRatio*totalSupply());
+    }
+
     /// @notice Mints ERC20 tokens using inherent Bonding Curve
     /// @param amt: Amount of tokens to buy
     function buyTokens(uint256 amt) public
@@ -108,7 +114,7 @@ contract ERC20_AMM is ERC20, Pausable, BondingCurve {
         _burn(msg.sender, amt);
         treasury.withdraw(msg.sender, get_sell_value);       
         emit SellSuccessfulFor(msg.sender);
-        ownership[msg.sender]-=get_sell_value;
+        ownership[msg.sender]-=amt;
         reserveBalance = treasury.getCollateralAmount();
         token_price = reserveBalance/(reserveRatio*totalSupply());
     }

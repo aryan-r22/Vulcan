@@ -11,7 +11,7 @@ pragma solidity >=0.8.9;
 import "./ERC20_AMM.sol";
 import "./Treasury.sol";
 
-contract ERC20_Factory{
+contract ERC20AMM_Factory{
 
 	address owner_addr;
 
@@ -43,14 +43,13 @@ contract ERC20_Factory{
 	/// @param founder_add: Address of the token founder.
 	/// @param amt: Initial amount to mint.
 	/// @param reserveRatio: The reserve ratio for the bonding curve.
-	/// @param coll: Initial collateral staked by the founder
     /// @param proj_hash: Token URI of the project details
     /// @param stable_coin: Contract address of the stablecoin to be used as collateral.
 	function createNewERC20AMM(string memory token_name, string memory token_sym, 
 		address founder_add, uint256 amt, uint256 reserveRatio,
-		uint256 coll, string memory proj_hash, address stable_coin) public {
+		 string memory proj_hash, address stable_coin) public {
 		require(msg.sender == owner_addr, 'You should be the owner to create ERC20 tokens');
-		Treasury tr = new Treasury(owner_addr, founder_add, coll, stable_coin);
+		Treasury tr = new Treasury(owner_addr, founder_add, stable_coin);
 
 		ERC20_AMM obj = new ERC20_AMM(token_name,token_sym,founder_add, owner_addr,
 			amt, reserveRatio, address(tr), proj_hash);

@@ -20,6 +20,7 @@ contract Treasury{
 	event Withdraw(address to, uint256 amount);
 	event Deposit(address from, uint256 amount);
 	event TransferCollateralToFounder(uint256 amount);
+	event InitialCollateralTransferred(uint256 amount);
 
 
 	address owner;
@@ -27,21 +28,26 @@ contract Treasury{
 	address founder;
 	address factory;
 	address erc20_address;
+	uint256 ini_coll;
 
     /// @notice Initializes Treasury contract
     /// @param founder_addr: Address of the token founder
     /// @param owner_addr: Address of the owner
     /// @param stable_cn: Contract address of the stablecoin to be used as collateral
-    /// @param ini_coll: Initial collateral staked by the founder
-	constructor(address owner_addr, address founder_addr,
-	 uint256 ini_coll, address stable_cn) {
+	constructor(address owner_addr, address founder_addr, address stable_cn) {
 		owner = owner_addr;
 		founder = founder_addr;
 		factory = msg.sender;
 		coll_token = IERC20(stable_cn);
-		require(coll_token.balanceOf(founder_addr)>=ini_coll, "Founder must have sufficient collateral holding");
-		coll_token.safeTransferFrom(founder_addr, address(this), ini_coll);
-		emit Deposit(founder_addr, ini_coll);
+	}
+
+
+	/// @notice For depositing initial collateral
+	/// @param amount: Amount to deposit
+	function initialDeposit(uint256 amount) public{
+		require(msg.sender == founder, "You need to be a founder to send initial collateral");
+		coll_token.safeTransferFrom(msg.sender, address(this), amount);
+		ini_coll = ini_coll+amount;
 	}
 
     /// @notice Deposits collateral to this contract's address
