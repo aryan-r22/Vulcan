@@ -12,7 +12,7 @@ type Props = {
 
 const ProjectCard = ({ backer }: Props) => {
   const StyledCard = styled(Card)(({ theme }) => ({
-    maxWidth: "400px",
+    maxWidth: "500px",
     borderRadius: `${backer ? "0px" : "20px"}`,
     boxShadow: `${backer ? "0" : "0px 10px 20px rgba(0, 0, 0, 0.5)"}`,
   }));
@@ -27,7 +27,7 @@ const ProjectCard = ({ backer }: Props) => {
   return (
     <StyledCard>
       <CardActionArea>
-        <CardMedia component="img" height="140" image={CardImage} />
+        <CardMedia component="img" height="200" image={CardImage} />
         <StyledCardContent>
           <Typography sx={{ color: "#fff" }} gutterBottom variant="h5" component="div">
             VR

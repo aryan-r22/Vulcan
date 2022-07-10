@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import { styled, useTheme, Theme, CSSObject } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import MuiDrawer from "@mui/material/Drawer";
@@ -25,15 +25,21 @@ import PlayCircleIcon from "@mui/icons-material/PlayCircle";
 import PeopleIcon from "@mui/icons-material/People";
 import SettingsIcon from "@mui/icons-material/Settings";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import LoginIcon from "@mui/icons-material/Login";
+import LogoutIcon from "@mui/icons-material/Logout";
 import SearchIcon from "@mui/icons-material/Search";
-import { Badge, Container, InputAdornment, TextField } from "@mui/material";
+import { Container, InputAdornment, TextField } from "@mui/material";
 import Home from "../pages/Home";
 import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import EthereumLogo from "../assets/ethereum-white.png";
 import Profile from "../pages/Profile";
+import { getCookie } from "../utils/cookies";
+import Login from "../pages/Login";
+import Register from "../pages/Register";
+import { getAuth, signOut } from "firebase/auth";
+import Loader from "../components/Loader";
+import Tooltip from "@mui/material/Tooltip";
+import LoadingContext from "../contexts/LoadingContext";
 
 const Icons = [
   [
@@ -151,10 +157,12 @@ const SearchBar = styled(TextField)(({ theme }) => ({
   },
 }));
 
-const StyledBoxContainer = styled(Box)(() => ({
-  marginTop: "40px",
+const StyledBoxContainer = styled(Box, { shouldForwardProp: (prop) => prop !== "mobile" })<{
+  mobile: boolean;
+}>(({ theme, mobile }) => ({
+  marginTop: mobile ? "57px" : "64px",
   flexGrow: 1,
-  height: `calc(100vh - 40px) !important`,
+  height: mobile ? `calc(100vh - 57px) !important` : `calc(100vh - 64px) !important`,
   background: "#1D203E",
   overflowY: "scroll",
   overflowX: "hidden",
@@ -164,13 +172,18 @@ const StyledBoxContainer = styled(Box)(() => ({
   },
 }));
 
-type SidebarProps = {};
+type MainWrapperProps = {
+  setUser?: React.Dispatch<React.SetStateAction<string | null>>;
+  children: any;
+};
 
-const Main = (props: SidebarProps) => {
+const MainWrapper = ({ children, setUser }: MainWrapperProps) => {
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   const matches = useMediaQuery("(min-width:600px)");
   const navigate = useNavigate();
+  const auth = getAuth();
+  const loadingContext = useContext(LoadingContext);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -178,6 +191,14 @@ const Main = (props: SidebarProps) => {
 
   const handleDrawerClose = () => {
     setOpen(false);
+  };
+
+  const logout = async () => {
+    await signOut(auth);
+    document.cookie = "user=;expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+    localStorage.removeItem("firstLogin");
+    if (setUser) setUser(null);
+    navigate("/");
   };
 
   return (
@@ -218,9 +239,11 @@ const Main = (props: SidebarProps) => {
               />
               <Box display="flex">
                 <ConnectButton />
-                <IconButton sx={{ marginLeft: 2 }} color="inherit">
-                  <LoginIcon />
-                </IconButton>
+                <Tooltip title="Log out">
+                  <IconButton onClick={logout} sx={{ marginLeft: 2 }} color="inherit">
+                    <LogoutIcon />
+                  </IconButton>
+                </Tooltip>
               </Box>
             </Box>
           </Toolbar>
@@ -251,72 +274,108 @@ const Main = (props: SidebarProps) => {
           <List>
             {["Home", "Music", "Gaming", "Science & Tech", "Education"].map((text, index) => (
               <ListItem key={text} disablePadding sx={{ display: "block", color: "#fff" }}>
-                <ListItemButton
-                  sx={{
-                    minHeight: 48,
-                    justifyContent: open ? "initial" : "center",
-                    px: 2.5,
-                  }}
-                  onClick={() => {
-                    if (text === "Home") navigate("/");
-                  }}
-                >
-                  <ListItemIcon
+                <Tooltip title={text} placement="right-start">
+                  <ListItemButton
                     sx={{
-                      minWidth: 0,
-                      mr: open ? 3 : "auto",
-                      justifyContent: "center",
+                      minHeight: 48,
+                      justifyContent: open ? "initial" : "center",
+                      px: 2.5,
+                    }}
+                    onClick={() => {
+                      if (text === "Home") navigate("/");
                     }}
                   >
-                    {Icons[0][index]}
-                  </ListItemIcon>
-                  <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-                </ListItemButton>
+                    <ListItemIcon
+                      sx={{
+                        minWidth: 0,
+                        mr: open ? 3 : "auto",
+                        justifyContent: "center",
+                      }}
+                    >
+                      {Icons[0][index]}
+                    </ListItemIcon>
+                    <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+                  </ListItemButton>
+                </Tooltip>
               </ListItem>
             ))}
           </List>
           <Divider />
           <List sx={{ marginTop: "auto" }}>
-            {["Settings", "My Profile"].map((text, index) => (
+            {["Settings", "Portfolio"].map((text, index) => (
               <ListItem key={text} disablePadding sx={{ display: "block", color: "#fff" }}>
-                <ListItemButton
-                  sx={{
-                    minHeight: 48,
-                    justifyContent: open ? "initial" : "center",
-                    px: 2.5,
-                  }}
-                  onClick={() => {
-                    text === "Settings" ? navigate("/settings") : navigate("/profile");
-                  }}
-                >
-                  <ListItemIcon
+                <Tooltip title={text} placement="right-start">
+                  <ListItemButton
                     sx={{
-                      minWidth: 0,
-                      mr: open ? 3 : "auto",
-                      justifyContent: "center",
+                      minHeight: 48,
+                      justifyContent: open ? "initial" : "center",
+                      px: 2.5,
+                    }}
+                    onClick={() => {
+                      text === "Settings" ? navigate("/settings") : navigate("/profile");
                     }}
                   >
-                    {Icons[1][index]}
-                  </ListItemIcon>
-                  <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-                </ListItemButton>
+                    <ListItemIcon
+                      sx={{
+                        minWidth: 0,
+                        mr: open ? 3 : "auto",
+                        justifyContent: "center",
+                      }}
+                    >
+                      {Icons[1][index]}
+                    </ListItemIcon>
+                    <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+                  </ListItemButton>
+                </Tooltip>
               </ListItem>
             ))}
           </List>
         </Drawer>
       </Box>
-      <StyledBoxContainer>
-        <Container maxWidth="lg">
-          <Box sx={{ padding: `${matches ? "80px" : "20px"}` }}>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/settings" element={<div>Settings</div>} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </Box>
-        </Container>
-      </StyledBoxContainer>
+      <Box width="100% !important">
+        <StyledBoxContainer mobile={!matches}>
+          <Loader loading={loadingContext.loading} />
+          <Container maxWidth="lg">
+            <Box sx={{ padding: `${matches ? "80px" : "20px"}` }}>{children}</Box>
+          </Container>
+        </StyledBoxContainer>
+      </Box>
+    </Box>
+  );
+};
+
+const Main = () => {
+  const [user, setUser] = useState<string | null>(getCookie("user"));
+
+  return (
+    <Box>
+      <Routes>
+        {user && (
+          <Route
+            path="/"
+            element={
+              <MainWrapper setUser={setUser}>
+                <Home user={user} />
+              </MainWrapper>
+            }
+          />
+        )}
+        {user && <Route path="/settings" element={<div>Settings</div>} />}
+        {user && (
+          <Route
+            path="/profile"
+            element={
+              <MainWrapper>
+                <Profile />
+              </MainWrapper>
+            }
+          />
+        )}
+        {!user && <Route path="/login" element={<Login setUser={setUser} />} />}
+        {!user && <Route path="/signup" element={<Register setUser={setUser} />} />}
+        {!user && <Route path="*" element={<Navigate to="/login" replace />} />}
+        {user && <Route path="*" element={<Navigate to="/" replace />} />}
+      </Routes>
     </Box>
   );
 };

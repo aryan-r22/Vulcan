@@ -19,7 +19,7 @@ const ProjectInfoBackerLayout = (props: Props) => {
       <Grid container spacing={4} marginLeft={0} width="100%" paddingY={2}>
         {[1, 2, 3].map((idx) => {
           return (
-            <Grid key={idx} item maxWidth="100%" sx={{ paddingLeft: "0 !important" }}>
+            <Grid key={idx} item width="100%" sx={{ paddingLeft: "0 !important" }}>
               <Box
                 display={"flex"}
                 sx={{

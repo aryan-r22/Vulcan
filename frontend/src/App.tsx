@@ -4,6 +4,9 @@ import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { chain, createClient, WagmiConfig, configureChains } from "wagmi";
 import { publicProvider } from "wagmi/providers/public";
 import "@rainbow-me/rainbowkit/styles.css";
+import Loader from "./components/Loader";
+import LoadingContext from "./contexts/LoadingContext";
+import { useState } from "react";
 
 const { chains, provider } = configureChains(
   [chain.mainnet, chain.polygon, chain.polygonMumbai, chain.goerli, chain.rinkeby],
@@ -22,11 +25,15 @@ const wagmiClient = createClient({
 });
 
 function App() {
+  const [loading, setLoading] = useState(false);
   return (
     <div className="App">
       <WagmiConfig client={wagmiClient}>
         <RainbowKitProvider chains={chains}>
-          <Main />
+          <LoadingContext.Provider value={{ loading, setLoading }}>
+            <Loader loading={loading} />
+            <Main />
+          </LoadingContext.Provider>
         </RainbowKitProvider>
       </WagmiConfig>
     </div>
