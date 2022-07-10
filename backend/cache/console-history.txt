@@ -1,0 +1,16 @@
+close
+quit()
+await factory.createNewERC20AMM("Vulcans", "VUS", "0xD4b06acE58cf5b0B9D2E73e2d4a67393983efc6b", 1000, 10000, "ProjHash", "0x6b9ab580746Cf3D5c102A643aBBc1f8fAF89DFF7");
+factory.createNewERC20AMM("Vulcan", "VUL", "0xD4b06acE58cf5b0B9D2E73e2d4a67393983efc6b", 1000, 10000, "ProjHash", "0x6b9ab580746Cf3D5c102A643aBBc1f8fAF89DFF7");
+const factory = await Factory.attach('0x3B5597E7F12Bc728816F4F91FDE389fD931090Ab');
+const peg = await Factory.attach('0x3B5597E7F12Bc728816F4F91FDE389fD931090Ab');
+const Factory = await ethers.getContractFactory('ERC20AMM_Factory');
+await peg.balanceOf('0xD4b06acE58cf5b0B9D2E73e2d4a67393983efc6b');
+await peg.mint_more(1000000000000000)
+await peg.mint_more(10000000000000000000000)
+await peg.getFounderAddr()
+await peg.getOwnerAddr()
+const peg = await Peg.attach('0x6b9ab580746Cf3D5c102A643aBBc1f8fAF89DFF7');
+const Peg = await ethers.getContractFactory('ERC20_Peg');
+const Box = await ethers.getContractFactory('ERC20_Peg');
+const Box = await ethers.getContractFactory('0x6b9ab580746Cf3D5c102A643aBBc1f8fAF89DFF7');
