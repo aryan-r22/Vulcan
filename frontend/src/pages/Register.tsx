@@ -1,5 +1,5 @@
 import { Box, Button, Container, Divider, TextField, Typography } from "@mui/material";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import GoogleLogo from "../assets/google-logo.png";
 import {
   getAuth,
@@ -13,29 +13,32 @@ import { Link, useNavigate } from "react-router-dom";
 import { createCookieInHour } from "../utils/cookies";
 import LoginBackground from "../assets/login-bg.jpg";
 import { firebaseConfig } from "../utils/firebase";
+import LoadingContext from "../contexts/LoadingContext";
+import AuthContext from "../contexts/AuthContext";
 
 initializeApp(firebaseConfig);
 
-type Props = {
-  setUser: React.Dispatch<React.SetStateAction<string | null>>;
-};
-
-const Register = ({ setUser }: Props) => {
+const Register = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const loadingContext = useContext(LoadingContext);
+  const authContext = useContext(AuthContext);
 
   const signUpWithEmailAndPassword = async () => {
     try {
       const auth = getAuth();
+      loadingContext.setLoading(true);
       await createUserWithEmailAndPassword(auth, email, password);
       const res = await signInWithEmailAndPassword(auth, email, password);
       console.log(res);
-      setUser(res.user.displayName !== null ? res.user.displayName : res.user.email);
+      authContext?.setUser(res.user.displayName !== null ? res.user.displayName : res.user.email);
       createCookieInHour("user", res?.user?.displayName, 10);
       localStorage.setItem("firstLogin", "true");
+      loadingContext.setLoading(false);
       navigate("/");
     } catch (err) {
+      loadingContext.setLoading(false);
       console.log(err);
     }
   };
@@ -44,13 +47,16 @@ const Register = ({ setUser }: Props) => {
     const auth = getAuth();
     const provider = new GoogleAuthProvider();
     try {
+      loadingContext.setLoading(true);
       const res = await signInWithPopup(auth, provider);
       console.log(res.user.displayName);
-      setUser(res.user.displayName !== null ? res.user.displayName : res.user.email);
+      authContext?.setUser(res.user.displayName !== null ? res.user.displayName : res.user.email);
       createCookieInHour("user", res?.user?.displayName, 10);
       localStorage.setItem("firstLogin", "true");
+      loadingContext.setLoading(false);
       navigate("/");
     } catch (err) {
+      loadingContext.setLoading(false);
       console.log(err);
     }
   };

@@ -40,6 +40,9 @@ import { getAuth, signOut } from "firebase/auth";
 import Loader from "../components/Loader";
 import Tooltip from "@mui/material/Tooltip";
 import LoadingContext from "../contexts/LoadingContext";
+import AuthContext from "../contexts/AuthContext";
+import PrivateRoute from "../components/PrivateRoute";
+import PublicRoute from "../components/PublicRoute";
 
 const Icons = [
   [
@@ -348,35 +351,39 @@ const Main = () => {
   const [user, setUser] = useState<string | null>(getCookie("user"));
 
   return (
-    <Box>
-      <Routes>
-        {user && (
-          <Route
-            path="/"
-            element={
-              <MainWrapper setUser={setUser}>
-                <Home user={user} />
-              </MainWrapper>
-            }
-          />
-        )}
-        {user && <Route path="/settings" element={<div>Settings</div>} />}
-        {user && (
-          <Route
-            path="/profile"
-            element={
-              <MainWrapper>
-                <Profile />
-              </MainWrapper>
-            }
-          />
-        )}
-        {!user && <Route path="/login" element={<Login setUser={setUser} />} />}
-        {!user && <Route path="/signup" element={<Register setUser={setUser} />} />}
-        {!user && <Route path="*" element={<Navigate to="/login" replace />} />}
-        {user && <Route path="*" element={<Navigate to="/" replace />} />}
-      </Routes>
-    </Box>
+    <AuthContext.Provider value={{ user, setUser }}>
+      <Box>
+        <Routes>
+          {/* Private Routes */}
+          <Route element={<PrivateRoute />}>
+            <Route
+              path="/home"
+              element={
+                <MainWrapper setUser={setUser}>
+                  <Home user={user} />
+                </MainWrapper>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <MainWrapper setUser={setUser}>
+                  <Profile />
+                </MainWrapper>
+              }
+            />
+            <Route path="*" element={<Navigate to="/home" replace />} />
+          </Route>
+
+          {/* Public Routes */}
+          <Route element={<PublicRoute />}>
+            {<Route path="/login" element={<Login />} />}
+            {<Route path="/signup" element={<Register />} />}
+            {<Route path="*" element={<Navigate to="/login" replace />} />}
+          </Route>
+        </Routes>
+      </Box>
+    </AuthContext.Provider>
   );
 };
 

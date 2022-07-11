@@ -13,18 +13,16 @@ import { createCookieInHour } from "../utils/cookies";
 import LoadingContext from "../contexts/LoadingContext";
 import LoginBackground from "../assets/login-bg.jpg";
 import { firebaseConfig } from "../utils/firebase";
+import AuthContext from "../contexts/AuthContext";
 
 initializeApp(firebaseConfig);
 
-type Props = {
-  setUser: React.Dispatch<React.SetStateAction<string | null>>;
-};
-
-const Login = ({ setUser }: Props) => {
+const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const loadingContext = useContext(LoadingContext);
+  const authContext = useContext(AuthContext);
 
   const GoogleSignInWithFirebase = async () => {
     const provider = new GoogleAuthProvider();
@@ -33,12 +31,13 @@ const Login = ({ setUser }: Props) => {
       loadingContext.setLoading(true);
       const res = await signInWithPopup(auth, provider);
       console.log(res.user.displayName);
-      setUser(res.user.displayName !== null ? res.user.displayName : res.user.email);
+      authContext?.setUser(res.user.displayName !== null ? res.user.displayName : res.user.email);
       createCookieInHour("user", res?.user?.displayName, 10);
       localStorage.setItem("firstLogin", "true");
       loadingContext.setLoading(false);
       navigate("/");
     } catch (err) {
+      loadingContext.setLoading(false);
       console.log(err);
     }
   };
@@ -49,12 +48,13 @@ const Login = ({ setUser }: Props) => {
       loadingContext.setLoading(true);
       const res = await signInWithEmailAndPassword(auth, email, password);
       console.log(res);
-      setUser(res.user.displayName !== null ? res.user.displayName : res.user.email);
+      authContext?.setUser(res.user.displayName !== null ? res.user.displayName : res.user.email);
       createCookieInHour("user", res?.user?.displayName, 10);
       localStorage.setItem("firstLogin", "true");
       loadingContext.setLoading(false);
       navigate("/");
     } catch (err) {
+      loadingContext.setLoading(false);
       console.log(err);
     }
   };
