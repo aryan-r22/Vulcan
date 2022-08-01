@@ -1,0 +1,16 @@
+const { ApolloServer, gql } = require('apollo-server');
+const typeDefs = gql`
+  # This "Project" type defines the queryable fields: 'name', 'loaction', 'social-media','website', 'sectors' and 'address[eth]'.
+  type Project {
+    name: String
+    location: String
+    social-media: String
+    website: String
+    sectors: String
+    address[eth]: String
+  }
+  # the "projects" query returns an array of zero or more projects
+  type Query {
+    projects: [Project]
+  }
+`;
