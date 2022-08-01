@@ -10,7 +10,9 @@ const typeDefs = gql`
     address[eth]: String
   }
   # the "projects" query returns an array of zero or more projects
+  # the "projectByCID" query returns Project by cid
   type Query {
-    projects: [Project]
+    projects:[Project]
+    projectByCID(id:ID!):Project 
   }
 `;
